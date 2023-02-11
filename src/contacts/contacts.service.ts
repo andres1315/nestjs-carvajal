@@ -2,16 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { ConfigService } from '@nestjs/config';
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Contact } from './entities/contact.entity';
+import { Repository } from 'typeorm';
 @Injectable()
 export class ContactsService {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    @InjectRepository(Contact) private contactRepo: Repository<Contact>,
+  ) {}
+
   create(createContactDto: CreateContactDto) {
     return 'This action adds a new contact';
   }
 
   findAll() {
-    return `${this.configService.get('DB_DATABASE')}`;
+    return this.contactRepo.find();
   }
 
   findOne(id: number) {
