@@ -2,7 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 import { ConfigService } from '@nestjs/config';
 import { Contact } from '../contacts/entities/contact.entity';
-
+import { init1676144577901 } from './migrations/1676144577901-init';
 config();
 const configService = new ConfigService();
 
@@ -16,10 +16,7 @@ export const dataSourceOptions: DataSourceOptions = {
   synchronize: false,
   logging: true,
   entities: [Contact],
-  migrations:
-    process.env.NODE_ENV === 'prod'
-      ? [__dirname + 'dist/database/migrations/*{.ts,.js}']
-      : [__dirname + 'src/database/migrations/*{.ts,.js}'],
+  migrations: [init1676144577901],
 };
 
 const datasource = new DataSource(dataSourceOptions);
