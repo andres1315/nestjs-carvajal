@@ -25,9 +25,9 @@ export class Contact {
   @Column({ type: 'varchar', length: 255, nullable: true })
   country: string;
 
-  @Column({ type: 'datetime', length: 255, default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @Column({ type: 'datetime', length: 255, default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 }
