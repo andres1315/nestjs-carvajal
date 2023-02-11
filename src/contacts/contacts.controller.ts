@@ -1,34 +1,77 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { Contact } from './entities/contact.entity';
 
 @Controller('contacts')
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
   @Post()
-  create(@Body() createContactDto: CreateContactDto) {
-    return this.contactsService.create(createContactDto);
+  async createContact(@Body() contact: CreateContactDto) {
+    if (!contact.cellphone || !contact.name || !contact.last_name)
+      return new HttpException(
+        ' Celular, nombre y apellido son requeridos',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const foundContact = await this.contactsService.findContactByPhone(
+      contact.cellphone,
+    );
+    if (foundContact)
+      return new HttpException(
+        'El numero de telefono ya existe',
+        HttpStatus.CONFLICT,
+      );
+
+    return this.contactsService.createContact(contact);
   }
 
   @Get()
-  findAll() {
-    return this.contactsService.findAll();
+  getContacts(): Promise<Contact[]> {
+    return this.contactsService.getContacts();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.contactsService.findOne(+id);
+  async getContact(@Param('id', ParseIntPipe) id: number) {
+    const contactFound = await this.contactsService.getContact(id);
+    if (!contactFound)
+      return new HttpException('Contacto no Encontrado', HttpStatus.NOT_FOUND);
+    return contactFound;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
-    return this.contactsService.update(+id, updateContactDto);
+  async updateContact(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateContactDto: UpdateContactDto,
+  ) {
+    if (updateContactDto?.cellphone) {
+      const contactFound = await this.contactsService.findContactByPhone(
+        updateContactDto.cellphone,
+      );
+      if (contactFound)
+        return new HttpException(
+          'El numero de telefono ya existe',
+          HttpStatus.CONFLICT,
+        );
+    }
+    return this.contactsService.updateContact(id, updateContactDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contactsService.remove(+id);
+  deleteContact(@Param('id', ParseIntPipe) id: number) {
+    return this.contactsService.deleteContact(id);
   }
 }
