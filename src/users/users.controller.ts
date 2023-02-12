@@ -31,10 +31,7 @@ export class UsersController {
         'Email y contraseña son Requeridos',
         HttpStatus.BAD_REQUEST,
       );
-    const foundUser = await this.usersService.findUserByEmail(
-      createUserDto.email,
-    );
-    console.log(foundUser);
+    const foundUser: any = await this.usersService.findOne(createUserDto.email);
     if (foundUser)
       throw new HttpException(
         'Ya existe un usuario registrado con este correo',
@@ -54,9 +51,7 @@ export class UsersController {
         'Email y contraseña son Requeridos',
         HttpStatus.BAD_REQUEST,
       );
-    const foundUser = await this.usersService.findUserByEmail(
-      loginUserDto.email,
-    );
+    const foundUser = await this.usersService.findOne(loginUserDto.email);
     const validatePassword = !foundUser
       ? null
       : await bcrypt.compare(loginUserDto.password, foundUser.password);
@@ -84,11 +79,6 @@ export class UsersController {
   @Get()
   findAll() {
     return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
   }
 
   @Patch(':id')

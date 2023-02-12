@@ -20,8 +20,8 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(email: string) {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -30,9 +30,5 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
-  }
-
-  findUserByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
   }
 }

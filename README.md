@@ -1,7 +1,12 @@
 ## Description
 
-[Back] Prueba tecnica.
+App [Back] Prueba tecnica.
+App [Front] https://github.com/andres1315/Appreact_carvajal.git
 
+## Tecnologias
+
+#Los endpoint se ejecutan sobre el puerto 3010 con prefijo api
+Ejemplo:http://localhost:3010/api/....
 ## Installation
 
 ```bash
