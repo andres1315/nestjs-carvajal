@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import { ConfigService } from '@nestjs/config';
 import { Contact } from '../contacts/entities/contact.entity';
 import { User } from '../users/entities/user.entity';
-
+import { init1676176793711 } from './migrations/1676176793711-init';
 config();
 const configService = new ConfigService();
 
@@ -17,7 +17,7 @@ export const dataSourceOptions: DataSourceOptions = {
   synchronize: false,
   logging: true,
   entities: [Contact, User],
-  migrations: ['/src/database/migrations/*.ts'],
+  migrations: [init1676176793711],
 };
 
 const datasource = new DataSource(dataSourceOptions);

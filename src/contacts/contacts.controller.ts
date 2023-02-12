@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Res,
+  Req,
   Patch,
   Param,
   Delete,
@@ -15,15 +16,21 @@ import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { Contact } from './entities/contact.entity';
-import { Response } from 'express';
+import { validateToken } from '../utils/utils';
+
 @Controller('contacts')
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
   @Post()
-  async createContact(@Body() contact: CreateContactDto, @Res() res: Response) {
+  async createContact(@Body() contact: CreateContactDto, @Req() request) {
+    const authorization = request.headers.authorization;
+    const validateTolkenResult = validateToken({ authorization });
+    if (!validateTolkenResult.success)
+      throw new HttpException('token missing', HttpStatus.UNAUTHORIZED);
+
     if (!contact.cellphone || !contact.name || !contact.last_name)
-      return new HttpException(
+      throw new HttpException(
         'Celular, nombre y apellido son requeridos',
         HttpStatus.BAD_REQUEST,
       );
@@ -32,7 +39,7 @@ export class ContactsController {
       contact.cellphone,
     );
     if (foundContact)
-      return new HttpException(
+      throw new HttpException(
         'El numero de telefono ya existe',
         HttpStatus.CONFLICT,
       );
@@ -41,15 +48,23 @@ export class ContactsController {
   }
 
   @Get()
-  getContacts(): Promise<Contact[]> {
+  getContacts(@Req() request) {
+    const authorization = request.headers.authorization;
+    const validateTolkenResult = validateToken({ authorization });
+    if (!validateTolkenResult.success)
+      throw new HttpException('token missing', HttpStatus.UNAUTHORIZED);
     return this.contactsService.getContacts();
   }
 
   @Get(':id')
-  async getContact(@Param('id', ParseIntPipe) id: number) {
+  async getContact(@Param('id', ParseIntPipe) id: number, @Req() request) {
     const contactFound = await this.contactsService.getContact(id);
+    const authorization = request.headers.authorization;
+    const validateTolkenResult = validateToken({ authorization });
+    if (!validateTolkenResult.success)
+      throw new HttpException('token missing', HttpStatus.UNAUTHORIZED);
     if (!contactFound)
-      return new HttpException('Contacto no Encontrado', HttpStatus.NOT_FOUND);
+      throw new HttpException('Contacto no Encontrado', HttpStatus.NOT_FOUND);
     return contactFound;
   }
 
@@ -57,9 +72,14 @@ export class ContactsController {
   async updateContact(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateContactDto: UpdateContactDto,
+    @Req() request,
   ) {
+    const authorization = request.headers.authorization;
+    const validateTolkenResult = validateToken({ authorization });
+    if (!validateTolkenResult.success)
+      throw new HttpException('token missing', HttpStatus.UNAUTHORIZED);
     if (!updateContactDto)
-      return new HttpException(
+      throw new HttpException(
         'No se recibieron los parametros para actualizar',
         HttpStatus.BAD_REQUEST,
       );
@@ -68,7 +88,7 @@ export class ContactsController {
         updateContactDto.cellphone,
       );
       if (contactFound)
-        return new HttpException(
+        throw new HttpException(
           'El numero de telefono ya existe',
           HttpStatus.CONFLICT,
         );
@@ -79,15 +99,20 @@ export class ContactsController {
       updateContactDto,
     );
     if (!contactUpdated.affected)
-      return new HttpException('Contacto no encontrado', HttpStatus.NOT_FOUND);
+      throw new HttpException('Contacto no encontrado', HttpStatus.NOT_FOUND);
     return contactUpdated;
   }
 
   @Delete(':id')
-  async deleteContact(@Param('id', ParseIntPipe) id: number) {
+  async deleteContact(@Param('id', ParseIntPipe) id: number, @Req() request) {
+    const authorization = request.headers.authorization;
+    const validateTolkenResult = validateToken({ authorization });
+    if (!validateTolkenResult.success)
+      throw new HttpException('token missing', HttpStatus.UNAUTHORIZED);
     const userDelete = await this.contactsService.deleteContact(id);
     if (!userDelete.affected)
-      return new HttpException('Contacto no encontrado', HttpStatus.NOT_FOUND);
+      throw new HttpException('Contacto no encontrado', HttpStatus.NOT_FOUND);
+
     return userDelete;
   }
 }
