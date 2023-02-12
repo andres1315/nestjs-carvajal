@@ -18,7 +18,10 @@ $ npm run migration:generate
 
 #Correr
 $ npm run migration:run
+
+#Link [ERD] https://drive.google.com/file/d/1VmcZLYUwuL7Nvb1MNxVAYcfNBBIAwj0L/view?usp=sharing
 ```
+
 
 ## Running the app
 
