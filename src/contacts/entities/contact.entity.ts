@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 @Entity()
 export class Contact {
   @PrimaryGeneratedColumn()
@@ -30,4 +31,10 @@ export class Contact {
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
+
+  @Column({ type: 'int' })
+  userId: number;
+
+  @ManyToOne(() => User, (user) => user.contacts)
+  user: User;
 }

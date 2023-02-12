@@ -2,7 +2,8 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 import { ConfigService } from '@nestjs/config';
 import { Contact } from '../contacts/entities/contact.entity';
-import { init1676144577901 } from './migrations/1676144577901-init';
+import { User } from '../users/entities/user.entity';
+
 config();
 const configService = new ConfigService();
 
@@ -15,8 +16,8 @@ export const dataSourceOptions: DataSourceOptions = {
   host: configService.get('DB_HOST'),
   synchronize: false,
   logging: true,
-  entities: [Contact],
-  migrations: [init1676144577901],
+  entities: [Contact, User],
+  migrations: ['/src/database/migrations/*.ts'],
 };
 
 const datasource = new DataSource(dataSourceOptions);
