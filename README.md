@@ -8,7 +8,8 @@
 # Instalar todas las dependencias
 $ npm install
 
-#Configurar la variable de entorno documento ejemplo(.env.example)
+#Configurar la variable de entorno de desarrollo. documento ejemplo(.env.example) nombre archivo.env(.env)
+#Configurar la variable de entorno de produccion. documento ejemplo(.env.example) nombre archivo.env(.prod.env)
 ```
 ## Correr Migraciones de base de datos
 ```bash
@@ -22,6 +23,9 @@ $ npm run migration:run
 ## Running the app
 
 ```bash
+#Construir
+$ npm run build
+
 # development
 $ npm run start
 
